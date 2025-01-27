@@ -37,6 +37,9 @@
     .start-btn:hover, .restart-btn:hover, .lang-btn:hover {
       background: grey;
     }
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -54,12 +57,20 @@
     <button id="lang-btn" class="lang-btn">English</button>
   </div>
 
+  <div id="game" class="hidden">
+    <h2>Hier beginnt das Spiel!</h2>
+    <p>Klicke auf die Formen, um sie aufzulösen.</p>
+  </div>
+
   <script>
     const langBtn = document.getElementById('lang-btn');
+    const startBtn = document.getElementById('start-btn');
+    const intro = document.getElementById('intro');
+    const game = document.getElementById('game');
+
     const title = document.getElementById('title');
     const description = document.getElementById('description');
     const instructions = document.getElementById('instructions');
-    const startBtn = document.getElementById('start-btn');
 
     // Sprache wechseln
     langBtn.addEventListener('click', () => {
@@ -82,7 +93,19 @@
         startBtn.textContent = 'Start';
         langBtn.textContent = 'English';
       }
+      attachStartButtonListener(); // Neu: Event-Listener nach dem Umschalten erneut anhängen
     });
+
+    // Start des Spiels
+    const attachStartButtonListener = () => {
+      startBtn.addEventListener('click', () => {
+        intro.classList.add('hidden');
+        game.classList.remove('hidden');
+      });
+    };
+
+    // Initial den Event-Listener anhängen
+    attachStartButtonListener();
   </script>
 </body>
 </html>
