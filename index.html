@@ -218,5 +218,19 @@
       location.reload();
     });
   </script>
+  <script>
+  // Funktion, die die Höhe des Inhalts an das übergeordnete Fenster sendet
+  function sendHeightToParent() {
+    const height = document.documentElement.scrollHeight; // Höhe des Inhalts
+    window.parent.postMessage({ type: 'resize-iframe', height: height }, '*');
+  }
+
+  // Höhe nach dem Laden senden
+  window.onload = sendHeightToParent;
+
+  // Höhe erneut senden, wenn sich der Inhalt dynamisch ändert
+  new ResizeObserver(() => sendHeightToParent()).observe(document.body);
+</script>
+
 </body>
 </html>
