@@ -40,6 +40,67 @@
     .hidden {
       display: none;
     }
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .form {
+      position: absolute;
+      cursor: pointer;
+      transition: opacity 1s, transform 1s;
+    }
+    .form.hidden {
+      opacity: 0;
+      transform: scale(0);
+    }
+    /* Gedanken - schwebende Wolken */
+    .gedanke {
+      width: 120px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: float 5s infinite ease-in-out;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
+    }
+    /* Gefühle - pulsierende Kreise */
+    .gefuehl {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 100, 100, 0.5);
+      border-radius: 50%;
+      animation: pulse 3s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    /* Konzepte - rotierende Würfel */
+    .konzept {
+      width: 80px;
+      height: 80px;
+      background: rgba(100, 255, 100, 0.4);
+      animation: rotate 4s infinite linear;
+    }
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    /* Text - Sprache */
+    .sprache {
+      font-size: 20px;
+      opacity: 0.8;
+      animation: fadeInOut 6s infinite;
+    }
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -57,9 +118,13 @@
     <button id="lang-btn" class="lang-btn">English</button>
   </div>
 
-  <div id="game" class="hidden">
-    <h2>Hier beginnt das Spiel!</h2>
-    <p>Klicke auf die Formen, um sie aufzulösen.</p>
+  <div id="game" class="container hidden">
+    <div class="form gedanke" style="top: 20%; left: 30%;" data-text-de="Sprache" data-text-en="Language">Sprache</div>
+    <div class="form gefuehl" style="top: 50%; left: 60%;" data-text-de="Ich" data-text-en="I">Ich</div>
+    <div class="form konzept" style="top: 70%; left: 40%;" data-text-de="Hier" data-text-en="Here">Hier</div>
+    <div class="form sprache" style="top: 10%; left: 50%;" data-text-de="Jetzt" data-text-en="Now">Jetzt</div>
+    <div class="form sprache" style="top: 30%; left: 20%;" data-text-de="Gewahrsein" data-text-en="Awareness">Gewahrsein</div>
+    <button id="restart-btn" class="restart-btn hidden">Neustart</button>
   </div>
 
   <script>
@@ -67,15 +132,20 @@
     const startBtn = document.getElementById('start-btn');
     const intro = document.getElementById('intro');
     const game = document.getElementById('game');
+    const restartBtn = document.getElementById('restart-btn');
+    const forms = document.querySelectorAll('.form');
 
     const title = document.getElementById('title');
     const description = document.getElementById('description');
     const instructions = document.getElementById('instructions');
 
+    let isEnglish = false; // Spracheinstellung
+
     // Sprache wechseln
     langBtn.addEventListener('click', () => {
-      if (langBtn.textContent === 'English') {
-        // Englische Texte
+      isEnglish = langBtn.textContent === 'English';
+
+      if (isEnglish) {
         title.textContent = 'The Game of Nothing';
         description.textContent = 'Welcome to a game that shows you what remains when everything disappears. ' +
                                   'You will dissolve thoughts, feelings, concepts, and words – and realize that what remains ' +
@@ -84,7 +154,6 @@
         startBtn.textContent = 'Start';
         langBtn.textContent = 'Deutsch';
       } else {
-        // Deutsche Texte
         title.textContent = 'Das Spiel des Nichts';
         description.textContent = 'Willkommen zu einem Spiel, das dir zeigt, was bleibt, wenn alles verschwindet. ' +
                                   'Du wirst Gedanken, Gefühle, Konzepte und Worte entfernen – und erkennen, dass das, ' +
@@ -93,19 +162,58 @@
         startBtn.textContent = 'Start';
         langBtn.textContent = 'English';
       }
-      attachStartButtonListener(); // Neu: Event-Listener nach dem Umschalten erneut anhängen
+
+      // Texte der Formen aktualisieren
+      forms.forEach(form => {
+        form.textContent = isEnglish ? form.getAttribute('data-text-en') : form.getAttribute('data-text-de');
+      });
     });
 
     // Start des Spiels
-    const attachStartButtonListener = () => {
-      startBtn.addEventListener('click', () => {
-        intro.classList.add('hidden');
-        game.classList.remove('hidden');
-      });
-    };
+    startBtn.addEventListener('click', () => {
+      intro.classList.add('hidden');
+      game.classList.remove('hidden');
+    });
 
-    // Initial den Event-Listener anhängen
-    attachStartButtonListener();
+    // Interaktion mit Formen
+    forms.forEach(form => {
+      form.addEventListener('click', () => {
+        form.classList.add('hidden'); // Startet die Animation
+        setTimeout(() => {
+          form.remove(); // Entfernt die Form nach der Animation
+          if (document.querySelectorAll('.form').length === 1) { // Nur der Neustart-Button bleibt
+            setTimeout(() => {
+              if (isEnglish) {
+                alert("Everything is gone. What remains?");
+              } else {
+                alert("Alles ist verschwunden. Was bleibt?");
+              }
+            }, 1000);
+            setTimeout(() => {
+              if (isEnglish) {
+                alert(
+                  "What remains is already here – complete, limitless, free.\n" +
+                  "Unwritten, unimagined, unexperienced, unnamed, unlimited.\n" +
+                  "Simply so, as it is."
+                );
+              } else {
+                alert(
+                  "Das, was bleibt, ist bereits hier – vollkommen, grenzenlos, frei.\n" +
+                  "Unbeschrieben, ungeglaubt, unerfahren, unbenannt, unbegrenzt.\n" +
+                  "Einfach so. Wie es ist."
+                );
+              }
+              restartBtn.classList.remove('hidden');
+            }, 3000);
+          }
+        }, 1000); // Verzögerung für die Animation
+      });
+    });
+
+    // Neustart des Spiels
+    restartBtn.addEventListener('click', () => {
+      location.reload();
+    });
   </script>
 </body>
 </html>
