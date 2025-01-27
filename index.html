@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Das Spiel des Nichts</title>
+  <style>
+    body {
+      background: black;
+      color: white;
+      overflow: hidden;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: none;
+    }
+    .intro {
+      text-align: center;
+      font-size: 20px;
+      line-height: 1.5;
+      max-width: 600px;
+    }
+    .start-btn, .restart-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      background: white;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+    .start-btn:hover, .restart-btn:hover {
+      background: grey;
+    }
+    .form {
+      position: absolute;
+      cursor: pointer;
+      transition: opacity 1s, transform 1s;
+    }
+    .form.hidden {
+      opacity: 0;
+      transform: scale(0);
+    }
+    /* Gedanken - schwebende Wolken */
+    .gedanke {
+      width: 120px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: float 5s infinite ease-in-out;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
+    }
+    /* Gefühle - pulsierende Kreise */
+    .gefuehl {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 100, 100, 0.5);
+      border-radius: 50%;
+      animation: pulse 3s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    /* Konzepte - rotierende Würfel */
+    .konzept {
+      width: 80px;
+      height: 80px;
+      background: rgba(100, 255, 100, 0.4);
+      animation: rotate 4s infinite linear;
+    }
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    /* Text - Sprache */
+    .sprache {
+      font-size: 20px;
+      opacity: 0.8;
+      animation: fadeInOut 6s infinite;
+    }
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="intro" class="intro">
+    <h1>Das Spiel des Nichts</h1>
+    <p>
+      Willkommen zu einem Spiel, das dir zeigt, was bleibt, wenn alles verschwindet. 
+      Du wirst Gedanken, Gefühle, Konzepte und Worte entfernen – 
+      und erkennen, dass das, was bleibt, weder sichtbar noch greifbar ist.
+    </p>
+    <p>
+      Klicke auf die Formen, um sie aufzulösen. Schau, was übrig bleibt, wenn alles verschwunden ist.
+    </p>
+    <button id="start-btn" class="start-btn">Start</button>
+  </div>
+
+  <div id="game" class="container">
+    <div class="form gedanke" style="top: 20%; left: 30%;"></div>
+    <div class="form gefuehl" style="top: 50%; left: 60%;"></div>
+    <div class="form konzept" style="top: 70%; left: 40%;"></div>
+    <div class="form sprache" style="top: 10%; left: 50%;">Sprache</div>
+    <div class="form sprache" style="top: 30%; left: 20%;">Ich</div>
+    <div class="form sprache" style="top: 40%; left: 70%;">Hier</div>
+    <div class="form sprache" style="top: 60%; left: 80%;">Jetzt</div>
+    <div class="form sprache" style="top: 80%; left: 10%;">Gewahrsein</div>
+    <button id="restart-btn" class="restart-btn" style="display: none;">Neustart</button>
+  </div>
+
+  <script>
+    const startBtn = document.getElementById('start-btn');
+    const intro = document.getElementById('intro');
+    const game = document.getElementById('game');
+    const restartBtn = document.getElementById('restart-btn');
+    const forms = document.querySelectorAll('.form');
+
+    // Start des Spiels
+    startBtn.addEventListener('click', () => {
+      intro.style.display = 'none';
+      game.style.display = 'block';
+    });
+
+    // Interaktion mit Formen
+    forms.forEach(form => {
+      form.addEventListener('click', () => {
+        form.classList.add('hidden');
+        setTimeout(() => {
+          form.remove();
+          if (document.querySelectorAll('.form').length === 1) { // Nur der Neustart-Button bleibt
+            setTimeout(() => {
+              alert("Alles ist verschwunden. Was bleibt?");
+            }, 1000);
+            setTimeout(() => {
+              alert("Das, was bleibt, ist bereits hier – vollkommen, grenzenlos, frei.");
+              restartBtn.style.display = 'block';
+            }, 3000);
+          }
+        }, 1000);
+      });
+    });
+
+    // Neustart des Spiels
+    restartBtn.addEventListener('click', () => {
+      location.reload();
+    });
+  </script>
+</body>
+</html>
