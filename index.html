@@ -6,28 +6,26 @@
   <title>Das Spiel des Nichts</title>
   <style>
     body {
-      background: black;
-      color: white;
-      overflow: hidden;
+      background: linear-gradient(180deg, #001f3f, #001233);
       margin: 0;
+      overflow: hidden;
+      height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
       font-family: Arial, sans-serif;
-      padding: 0 10px; /* Horizontaler Abstand */
+      color: white;
     }
+
     .intro {
       text-align: center;
-      font-size: 18px;
-      line-height: 1.5;
-      max-width: 600px;
-      margin: 0 auto;
+      z-index: 10;
     }
+
     .start-btn, .restart-btn, .lang-btn {
       margin-top: 20px;
-      padding: 8px 16px;
+      padding: 10px 20px;
       font-size: 16px;
       cursor: pointer;
       background: white;
@@ -36,77 +34,139 @@
       border-radius: 5px;
       transition: background 0.3s;
     }
+
     .start-btn:hover, .restart-btn:hover, .lang-btn:hover {
       background: grey;
     }
-    .hidden {
-      display: none;
-    }
+
     .container {
+      display: none;
       position: relative;
       width: 100%;
-      height: calc(100vh - 120px); /* Platz für Header und Footer */
+      height: calc(100vh - 120px);
       overflow: hidden;
+      z-index: 10;
     }
+
     .form {
       position: absolute;
       cursor: pointer;
       transition: opacity 1s, transform 1s;
     }
+
     .form.hidden {
       opacity: 0;
       transform: scale(0);
     }
-    /* Gedanken - schwebende Wolken */
+
+    /* Formen - Animationen */
     .gedanke {
-      width: 90px;
-      height: 60px;
+      width: 120px;
+      height: 80px;
       background: rgba(255, 255, 255, 0.3);
       border-radius: 50%;
       animation: float 5s infinite ease-in-out;
     }
-    @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0); }
-    }
-    /* Gefühle - pulsierende Kreise */
+
     .gefuehl {
-      width: 80px;
-      height: 80px;
+      width: 100px;
+      height: 100px;
       background: rgba(255, 100, 100, 0.5);
       border-radius: 50%;
       animation: pulse 3s infinite;
     }
+
     @keyframes pulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
+      50% { transform: scale(1.2); }
       100% { transform: scale(1); }
     }
-    /* Konzepte - rotierende Würfel */
+
     .konzept {
-      width: 70px;
-      height: 70px;
+      width: 80px;
+      height: 80px;
       background: rgba(100, 255, 100, 0.4);
       animation: rotate 4s infinite linear;
     }
+
     @keyframes rotate {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    /* Text - Sprache */
-    .sprache {
-      font-size: 16px;
-      opacity: 0.8;
-      animation: fadeInOut 6s infinite;
+
+    /* Quallen-Container */
+    .jellyfish-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
     }
-    @keyframes fadeInOut {
-      0%, 100% { opacity: 0; }
-      50% { opacity: 1; }
+
+    .jellyfish {
+      position: absolute;
+      width: 100px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50% 50% 40% 40%;
+      animation: float 6s infinite ease-in-out, drift 10s infinite linear;
+    }
+
+    .jellyfish::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      width: 80px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      animation: tentacle 3s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes drift {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    @keyframes tentacle {
+      0%, 100% {
+        transform: translateX(-50%) scale(1);
+      }
+      50% {
+        transform: translateX(-50%) scale(1.1);
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Quallen-Animation -->
+  <div class="jellyfish-container">
+    <div class="jellyfish" id="jellyfish1"></div>
+    <div class="jellyfish" id="jellyfish2"></div>
+    <div class="jellyfish" id="jellyfish3"></div>
+  </div>
+
+  <!-- Hauptinhalt -->
   <div id="intro" class="intro">
     <h1 id="title">Das Spiel des Nichts</h1>
     <p id="description">
@@ -121,116 +181,94 @@
     <button id="lang-btn" class="lang-btn">English</button>
   </div>
 
-  <div id="game" class="container hidden">
-    <div class="form gedanke" style="top: 15%; left: 20%;" data-text-de="Sprache" data-text-en="Language">Sprache</div>
-    <div class="form gefuehl" style="top: 50%; left: 60%;" data-text-de="Ich" data-text-en="I">Ich</div>
-    <div class="form konzept" style="top: 70%; left: 40%;" data-text-de="Hier" data-text-en="Here">Hier</div>
-    <div class="form sprache" style="top: 10%; left: 50%;" data-text-de="Jetzt" data-text-en="Now">Jetzt</div>
-    <div class="form sprache" style="top: 30%; left: 20%;" data-text-de="Gewahrsein" data-text-en="Awareness">Gewahrsein</div>
+  <div id="game" class="container">
+    <div class="form gedanke" style="top: 20%; left: 30%; display: none;">Sprache</div>
+    <div class="form gefuehl" style="top: 50%; left: 60%; display: none;">Ich</div>
+    <div class="form konzept" style="top: 70%; left: 40%; display: none;">Hier</div>
+    <div class="form sprache" style="top: 10%; left: 50%; display: none;">Jetzt</div>
+    <div class="form sprache" style="top: 30%; left: 20%; display: none;">Gewahrsein</div>
     <button id="restart-btn" class="restart-btn hidden">Neustart</button>
   </div>
 
-  <script>
-    const langBtn = document.getElementById('lang-btn');
-    const startBtn = document.getElementById('start-btn');
-    const intro = document.getElementById('intro');
-    const game = document.getElementById('game');
-    const restartBtn = document.getElementById('restart-btn');
-    const forms = document.querySelectorAll('.form');
+<script>
+  const startBtn = document.getElementById('start-btn');
+  const langBtn = document.getElementById('lang-btn');
+  const intro = document.getElementById('intro');
+  const game = document.getElementById('game');
+  const restartBtn = document.getElementById('restart-btn');
+  const forms = document.querySelectorAll('.form');
 
-    const title = document.getElementById('title');
-    const description = document.getElementById('description');
-    const instructions = document.getElementById('instructions');
+  let isEnglish = navigator.language.startsWith('en');
 
-    let isEnglish = false; // Spracheinstellung
-
-    // Sprache wechseln
-    langBtn.addEventListener('click', () => {
-      isEnglish = langBtn.textContent === 'English';
-
-      if (isEnglish) {
-        title.textContent = 'The Game of Nothing';
-        description.textContent = 'Welcome to a game that shows you what remains when everything disappears. ' +
-                                  'You will dissolve thoughts, feelings, concepts, and words – and realize that what remains ' +
-                                  'is neither visible nor tangible.';
-        instructions.textContent = 'Click on the shapes to dissolve them. See what remains when everything is gone.';
-        startBtn.textContent = 'Start';
-        langBtn.textContent = 'Deutsch';
-      } else {
-        title.textContent = 'Das Spiel des Nichts';
-        description.textContent = 'Willkommen zu einem Spiel, das dir zeigt, was bleibt, wenn alles verschwindet. ' +
-                                  'Du wirst Gedanken, Gefühle, Konzepte und Worte entfernen – und erkennen, dass das, ' +
-                                  'was bleibt, weder sichtbar noch greifbar ist.';
-        instructions.textContent = 'Klicke auf die Formen, um sie aufzulösen. Schau, was übrig bleibt, wenn alles verschwunden ist.';
-        startBtn.textContent = 'Start';
-        langBtn.textContent = 'English';
-      }
-
-      // Texte der Formen aktualisieren
-      forms.forEach(form => {
-        form.textContent = isEnglish ? form.getAttribute('data-text-en') : form.getAttribute('data-text-de');
-      });
-    });
-
-    // Start des Spiels
-    startBtn.addEventListener('click', () => {
-      intro.classList.add('hidden');
-      game.classList.remove('hidden');
-    });
-
-    // Interaktion mit Formen
-    forms.forEach(form => {
-      form.addEventListener('click', () => {
-        form.classList.add('hidden'); // Startet die Animation
-        setTimeout(() => {
-          form.remove(); // Entfernt die Form nach der Animation
-          if (document.querySelectorAll('.form').length === 1) { // Nur der Neustart-Button bleibt
-            setTimeout(() => {
-              if (isEnglish) {
-                alert("Everything is gone. What remains?");
-              } else {
-                alert("Alles ist verschwunden. Was bleibt?");
-              }
-            }, 1000);
-            setTimeout(() => {
-              if (isEnglish) {
-                alert(
-                  "What remains is already here – complete, limitless, free.\n" +
-                  "Unwritten, unimagined, unexperienced, unnamed, unlimited.\n" +
-                  "Simply so, as it is."
-                );
-              } else {
-                alert(
-                  "Das, was bleibt, ist bereits hier – vollkommen, grenzenlos, frei.\n" +
-                  "Unbeschrieben, ungeglaubt, unerfahren, unbenannt, unbegrenzt.\n" +
-                  "Einfach so. Wie es ist."
-                );
-              }
-              restartBtn.classList.remove('hidden');
-            }, 3000);
-          }
-        }, 1000); // Verzögerung für die Animation
-      });
-    });
-
-    // Neustart des Spiels
-    restartBtn.addEventListener('click', () => {
-      location.reload();
-    });
-  </script>
-  <script>
-  // Funktion, die die Höhe des Inhalts an das übergeordnete Fenster sendet
-  function sendHeightToParent() {
-    const height = document.documentElement.scrollHeight; // Höhe des Inhalts
-    window.parent.postMessage({ type: 'resize-iframe', height: height }, '*');
+  // Sprache setzen
+  function setLanguage() {
+    startBtn.textContent = isEnglish ? 'Start' : 'Starten';
+    langBtn.textContent = isEnglish ? 'Deutsch' : 'English';
+    document.getElementById('title').textContent = isEnglish ? 'The Game of Nothing' : 'Das Spiel des Nichts';
+    document.getElementById('description').textContent = isEnglish
+      ? 'Welcome to a game that shows you what remains when everything disappears.'
+      : 'Willkommen zu einem Spiel, das dir zeigt, was bleibt, wenn alles verschwindet.';
+    document.getElementById('instructions').textContent = isEnglish
+      ? 'Click on the shapes to dissolve them. See what remains when everything is gone.'
+      : 'Klicke auf die Formen, um sie aufzulösen. Schau, was übrig bleibt, wenn alles verschwunden ist.';
   }
 
-  // Höhe nach dem Laden senden
-  window.onload = sendHeightToParent;
+  // Zufällige Position und Bewegung für Quallen
+  function randomizeJellyfish() {
+    const jellyfish = document.querySelectorAll('.jellyfish');
+    jellyfish.forEach(jelly => {
+      const top = Math.random() * 80; // 0% bis 80%
+      const left = Math.random() * 100; // 0% bis 100%
+      const duration = Math.random() * 10 + 15;
+      const delay = Math.random() * 5;
 
-  // Höhe erneut senden, wenn sich der Inhalt dynamisch ändert
-  new ResizeObserver(() => sendHeightToParent()).observe(document.body);
+      jelly.style.top = `${top}%`;
+      jelly.style.left = `${left}%`;
+      jelly.style.animationDuration = `${duration}s`;
+      jelly.style.animationDelay = `${delay}s`;
+    });
+  }
+
+  randomizeJellyfish();
+
+  langBtn.addEventListener('click', () => {
+    isEnglish = !isEnglish;
+    setLanguage();
+  });
+
+  startBtn.addEventListener('click', () => {
+    intro.style.display = 'none';
+    game.style.display = 'block';
+    forms.forEach(form => (form.style.display = 'block')); // Formen sichtbar machen
+  });
+
+  forms.forEach(form => {
+    form.addEventListener('click', () => {
+      form.classList.add('hidden');
+      setTimeout(() => {
+        form.remove();
+        if (document.querySelectorAll('.form').length === 1) { // Wenn alle Formen entfernt sind
+          setTimeout(() => {
+            alert(isEnglish ? "Everything is gone. What remains?" : "Alles ist verschwunden. Was bleibt?");
+            setTimeout(() => {
+              alert(isEnglish
+                ? "What remains is already here – complete, limitless, free."
+                : "Das, was bleibt, ist bereits hier – vollkommen, grenzenlos, frei.");
+              // Neustart-Button sichtbar machen
+              restartBtn.style.display = 'block';
+            }, 2000); // Verzögerung für die zweite Abschlussmeldung
+          }, 1000); // Verzögerung für die erste Abschlussmeldung
+        }
+      }, 1000); // Verzögerung für das Entfernen der Formen
+    });
+  });
+
+  restartBtn.addEventListener('click', () => location.reload());
+
+  setLanguage();
 </script>
+
 
 </body>
 </html>
+
