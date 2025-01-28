@@ -200,6 +200,11 @@
 
   let isEnglish = navigator.language.startsWith('en');
 
+  const formTexts = {
+    de: ["Sprache", "Ich", "Hier", "Jetzt", "Gewahrsein"],
+    en: ["Language", "I", "Here", "Now", "Awareness"],
+  };
+
   // Sprache setzen
   function setLanguage() {
     startBtn.textContent = isEnglish ? 'Start' : 'Starten';
@@ -211,6 +216,11 @@
     document.getElementById('instructions').textContent = isEnglish
       ? 'Click on the shapes to dissolve them. See what remains when everything is gone.'
       : 'Klicke auf die Formen, um sie aufzulösen. Schau, was übrig bleibt, wenn alles verschwunden ist.';
+
+    // Texte der Formen aktualisieren
+    forms.forEach((form, index) => {
+      form.textContent = isEnglish ? formTexts.en[index] : formTexts.de[index];
+    });
   }
 
   // Zufällige Position und Bewegung für Quallen
@@ -251,12 +261,18 @@
           setTimeout(() => {
             alert(isEnglish ? "Everything is gone. What remains?" : "Alles ist verschwunden. Was bleibt?");
             setTimeout(() => {
-              alert(isEnglish
-                ? "What remains is already here – complete, limitless, free."
-                : "Das, was bleibt, ist bereits hier – vollkommen, grenzenlos, frei.");
+              alert(
+                isEnglish
+                  ? "What remains is already here – complete, limitless, free.\n" +
+                    "Unwritten, unimagined, unexperienced, unnamed, unlimited.\n" +
+                    "Simply so, as it is."
+                  : "Das, was bleibt, ist bereits hier – vollkommen, grenzenlos, frei.\n" +
+                    "Unbeschrieben, ungeglaubt, unerfahren, unbenannt, unbegrenzt.\n" +
+                    "Einfach so. Wie es ist."
+              );
               // Neustart-Button sichtbar machen
               restartBtn.style.display = 'block';
-            }, 2000); // Verzögerung für die zweite Abschlussmeldung
+            }, 2000); // Verzögerung für die erweiterte zweite Abschlussmeldung
           }, 1000); // Verzögerung für die erste Abschlussmeldung
         }
       }, 1000); // Verzögerung für das Entfernen der Formen
